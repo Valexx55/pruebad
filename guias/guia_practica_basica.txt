@@ -1,0 +1,52 @@
+//guía oficial https://angular.dev/installation
+//paso previo- instalar node
+//comproboar si node existe 
+node --version
+npm --version
+//creo el proyecto localmente
+//FORMA 1
+npm install -g @angular/cli //instalo
+ng new <project-name>//creo el proyecto
+//FORMA 2
+npx @angular/cli new appminsaitprueba //instalo y creo el proyecto
+//corro el proyecto y me abre una ventana
+npx ng serve -o
+//creo dos componentes / páginas en mi app
+(antes creo la carpeta components dentro de app)
+ng g c components/inicio
+ng g c components/movimientos
+//añadimos sección de navegación en app html
+//app html plantilla
+<div class="content">
+ <nav style="display:flex; gap:12px; padding:12px; border-bottom:1px solid #ddd;">
+      <a routerLink="/inicio" routerLinkActive="active">INICIO</a>
+      <a routerLink="/movimientos" routerLinkActive="active">MOVIMIENTOS</a>
+    </nav>
+//añadimos las rutas mapeo de rutas - componentes
+//app routes
+/**
+ * este aRRAY de rutas es fundamental para angular 
+ * cuando yo quiera navegar a una ruta está 
+ * estará asociado a un componente 
+ * de tal manera que se van a mantener asociados 
+ * un string con un componente 
+ * y es así como se hace la navegación con angulaR
+ */
+
+export const routes: Routes = [
+    {path:'inicio', component: Inicio},
+    {path:'movimientos', component: Movimientos}
+];
+//importamos las clases routerLink y routerLinkActive explícitamente
+//en el app component -standalone v17-
+import { Component, signal } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+
+@Component({
+  selector: 'app-root',
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+//parar (ctrl +c ) arrancar (ng serve -o) y vemos cómo 
+//funciona la navegación, el rol de RouterOutlet
