@@ -1,0 +1,7 @@
+Custom Event: mecanismo del API estándar del navegador para comunicar dos componentes en la misma página/pestaña 
+
+https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
+
+Broadcast Event: mecanismo del API estándar del navegador para comunicar dos componentes en diferentes pestañas 
+
+https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel
