@@ -9,7 +9,8 @@ module.exports = withModuleFederationPlugin({
 
   //esto es lo que hacemos público de este MF lo que compartimos
   exposes: {
-    './Module': './projects/perfil/src/app/perfil/perfil.module.ts',
+    './ModulePerfil': './projects/perfil/src/app/perfil/perfil.module.ts',
+    //'./ModuleEquipo': './projects/perfil/src/app/equipo/equipo.module.ts',
         
   },
 
