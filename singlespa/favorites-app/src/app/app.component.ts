@@ -34,7 +34,11 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     this.channel.onmessage = (event: MessageEvent<FavoriteMessage>) => {
-      this.ngZone.run(() => {
+      //importante ngZone no revisa por defecto el estado del componente-plantilla
+      //ante un mensaje broadCastChannel. Debemos incluir la actulación dentro de la función run
+      //de ngZone para que se reevalúe el estado del componente y su correspondencia con la plantilla
+      //relación signal:zoneLess
+     this.ngZone.run(() => {
         if (event.data.type === 'news:add-favorite') {
           const item = event.data.payload;
 
@@ -46,7 +50,7 @@ export class AppComponent implements OnInit, OnDestroy {
           console.log('Favorito recibido', item);
           console.log('Favorites actualizados', this.favorites);
         }
-      });
+     });
     };
   }
 
@@ -54,8 +58,26 @@ export class AppComponent implements OnInit, OnDestroy {
     this.channel.close();
   }
 
-  removeFavorite(id: number): void {
+  /*removeFavorite(id: number): void {
     this.favorites = this.favorites.filter((f) => f.id !== id);
     //TODO: eliminar favoritos del navegador
-  }
+  }*/
+
+  removeFavorite(id: number): void {
+  // 1. Eliminar de la lista local
+  this.favorites = this.favorites.filter(f => f.id !== id);
+
+  // 2. Actualizar localStorage
+  localStorage.setItem('mf-favorites', JSON.stringify(this.favorites));
+
+  // 3. Notificar a los microfrontends
+  //SIN EFECTO , SÓLO PARA LOS SUSCRUPTORES
+  /*this.channel.postMessage({
+    type: 'news:remove-favorite',
+    payload: id,
+  });*/
+
+  console.log('Favorito eliminado:', id);
+  console.log('Favorites actualizados:', this.favorites);
+}
 }

@@ -1,0 +1,224 @@
+nvm use 22 //a partir de 20 compatibilidad con esm
+npx create-single-spa
+
+? Directory for new project root-config
+? Select type to generate single-spa root config
+? Which package manager do you want to use? npm
+? Will this project use Typescript? Yes
+? Would you like to use single-spa Layout Engine Yes
+? Organization name (can use letters, numbers, dash or underscore) vm
+Initialized empty Git repository in C:/Users/valer/Documents/DOCU CURSOS/INDRAMF/ssnoticias/vm-single-spa-news/root-config/.git/
+
+
+cd root-config
+npm start //comprobamos que levanta
+
+GENERAMOS LA APP DE NOTICIAS
+USAMOS NO STAND ALNE PORQUE SINGLE SPA CARGA POR MÓDULOS
+/*/*/*/*/*/*
+
+npx -p @angular/cli@18 ng new news-app --no-standalone --routing --style css --skip-git
+cd news-app
+npm install
+npx ng add single-spa-angular@9
+npm install
+
+QUITAMOS EL ATRIBUTO BROWSER de angular.json (línea 28) //single spa en el scritp nos gnera integración antigua con angular, ya no está ese atributo en angular 18
+
+  "browser": "src/main.ts",
+
+el en fichero main.single-spa.ts
+
+QUITAMOS Lo relativo a  enviroment declaración y bloque de código
+
+y debería arrancar
+
+npm run serve:single-spa:news-app en 4201
+
+
+
+GENERAMOS LA APP DE FAVORITOS
+USAMOS NO STAND ALNE PORQUE SINGLE SPA CARGA POR MÓDULOS
+/*/*/*/*/*/*
+
+npx -p @angular/cli@18 ng new favorites-app --no-standalone --routing --style css --skip-git
+cd favorites-app
+npm install
+npx ng add single-spa-angular@9
+npm install
+
+QUITAMOS EL ATRIBUTO BROWSER de angular.json (línea 28) //single spa en el scritp nos gnera integración antigua con angular, ya no está ese atributo en angular 18
+
+  "browser": "src/main.ts",
+
+el en fichero main.single-spa.ts
+
+QUITAMOS Lo relativo a  enviroment declaración y bloque de código
+
+y debería arrancar
+
+npm run serve:single-spa:news-app en 4201
+
+/*/***/
+
+
+DE LOS ANGULAR .JSON DE AMBIOS, QUITAMOS
+
+"customWebpackConfig": {
+              "path": "extra-webpack.config.js",
+              "libraryName": "news-app",//FUERA
+              "libraryTarget": "umd"//fuera 
+            }
+
+pq queremos exportar/cagra móculos EMS módulos
+
+
+en el root config, en el index js, añadimos 
+
+"@vm/news-app": "//localhost:4201/main.js",
+    "@vm/favorites-app": "//localhost:4202/main.js" y quedará así
+
+ <% if (isLocal) { %>
+  <script type="injector-importmap">
+    {
+      "imports": {
+        "@vm/root-config": "//localhost:9000/vm-root-config.js",
+        "@single-spa/welcome": "https://cdn.jsdelivr.net/npm/single-spa-welcome/dist/single-spa-welcome.min.js",
+        "@vm/news-app": "//localhost:4201/main.js",
+    "@vm/favorites-app": "//localhost:4202/main.js"
+      }
+    }
+  </script>
+  <% } %>
+
+
+y también en ese fichero, añadimos
+
+  <script src="https://cdn.jsdelivr.net/npm/zone.js@0.14.0/bundles/zone.umd.min.js"></script>
+
+encima de </head> porque se necesita en los intercambios, como dependencia global (ojo con la versión verificar versiones locales del clientes nauglar)
+
+
+/*/*/*//*/ en ambos fiocheros extra-webpack config js dejamos esta versión, adaptada a ems
+
+//“usa esa configuración como base, pero obliga a webpack a generar un microfrontend ESM real en lugar de un bundle UMD”
+//para que la liberría pueda consujmirse como jun impory no con System,import jS
+
+Este fichero intercepta la configuración webpack generada por Angular + single-spa-angular y la modifica para que el bundle final 
+se genere como un módulo ES (ESM) en lugar de UMD, 
+permitiendo que el microfrontend se cargue mediante import() en el root-config de single-spa
+
+// Importamos la función de configuración webpack que proporciona la librería
+// single-spa-angular. Esta función recibe la configuración base de Angular
+// y la adapta para que la aplicación Angular pueda funcionar como microfrontend
+// dentro de single-spa (añadiendo lifecycles bootstrap/mount/unmount, etc.)
+const singleSpaAngularWebpack = require("single-spa-angular/lib/webpack").default;
+
+// Exportamos una función que Angular CLI llamará para modificar la configuración
+// webpack que genera internamente. Esta función recibe:
+// - config: la configuración webpack generada por Angular
+// - options: opciones de build que Angular pasa al builder
+module.exports = (config, options) => {
+
+  // Aplicamos primero la transformación que necesita single-spa-angular.
+  // Esto convierte la aplicación Angular en una microaplicación compatible
+  // con single-spa (añadiendo el soporte para los lifecycles).
+  const cfg = singleSpaAngularWebpack(config, options);
+
+  // Activamos un "experimento" de webpack que permite generar bundles
+  // en formato ES Modules (ESM). Webpack requiere habilitar esto explícitamente
+  // para poder emitir módulos en lugar de scripts clásicos.
+  cfg.experiments = {
+    // Conservamos cualquier configuración previa de experiments
+    ...(cfg.experiments || {}),
+
+    // Indicamos a webpack que el bundle final puede generarse como módulo ES.
+    outputModule: true,
+  };
+
+  // Modificamos la configuración de salida (output) de webpack.
+  // Esto controla cómo se genera el fichero final main.js.
+  cfg.output = {
+
+    // Conservamos cualquier configuración de salida previa
+    ...(cfg.output || {}),
+
+    // Indicamos que el bundle final debe generarse como módulo ES.
+    // Esto permite que pueda ser cargado mediante import() dinámico.
+    module: true,
+
+    // Indicamos que el script generado debe tratarse como "type=module".
+    // Esto refuerza que el código se interprete como ES Module.
+    scriptType: "module",
+
+    // Si webpack genera chunks adicionales (por ejemplo por lazy loading),
+    // también deben emitirse como módulos ES.
+    chunkFormat: "module",
+
+    // Evitamos que webpack envuelva el bundle en un IIFE
+    // (Immediately Invoked Function Expression).
+    // Ese patrón era común en bundles clásicos pero no es necesario
+    // cuando trabajamos con ES Modules.
+    iife: false,
+
+    // Indicamos que, si el bundle se expone como librería,
+    // el tipo de librería debe ser "module" (ESM) en lugar de UMD.
+    library: {
+      type: "module",
+    },
+  };
+
+  // Eliminamos explícitamente cualquier configuración previa que fuerce
+  // el uso de UMD (Universal Module Definition). Esto es importante porque
+  // Angular CLI o single-spa-angular pueden establecer:
+  //
+  //    libraryTarget: "umd"
+  //
+  // Si esa propiedad se mantiene, entraría en conflicto con el nuevo formato
+  // de salida "module" que queremos usar.
+  delete cfg.output.libraryTarget;
+
+  // Devolvemos la configuración webpack final ya modificada.
+  // Angular CLI usará esta configuración para generar el bundle
+  // del microfrontend.
+  return cfg;
+};
+
+/*/*/*
+
+en el fichero de microfrontelenayour, es donde asociomos los enlances a las librerías y ponemos esto
+
+  <nav style="display:flex; gap:12px; padding:12px; border-bottom:1px solid #ddd;">
+    <a href="/news">News</a>
+    <a href="/favorites">Favorites</a>
+  </nav>
+
+  <main>
+    <route default>
+      <application name="@single-spa/welcome"></application>
+    </route>
+    <route path="news">
+      <application name="@vm/news-app"></application>
+    </route>
+
+    <route path="favorites">
+      <application name="@vm/favorites-app"></application>
+    </route>
+  </main>
+</single-spa-router>
+
+
+/*/**/
+
+añadimos en el appmodule de cada micro lo sigioente
+
+
+providers: [
+    { provide: APP_BASE_HREF, useValue: '/news' }//para indicar que la raíz de la app es http://localhost:9000/favorites
+  ],
+
+y ya debería funcionar todo.
+
+ahora después, programamos cada micro
+y después, los comunicamos primero con BC chanell y luego reforzamos con storage
+
