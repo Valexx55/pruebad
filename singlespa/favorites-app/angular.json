@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "news-app": {
+    "favorites-app": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -23,7 +23,7 @@
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
           "options": {
-            "outputPath": "dist/news-app",
+            "outputPath": "dist/favorites-app",
             "index": "src/index.html",
             "polyfills": [
               "zone.js"
@@ -43,7 +43,7 @@
             "customWebpackConfig": {
               "path": "extra-webpack.config.js"
             },
-            "deployUrl": "http://localhost:4201/"
+            "deployUrl": "http://localhost:4202/"
           },
           "configurations": {
             "production": {
@@ -74,10 +74,10 @@
           "builder": "@angular-builders/custom-webpack:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "news-app:build:production"
+              "buildTarget": "favorites-app:build:production"
             },
             "development": {
-              "buildTarget": "news-app:build:development"
+              "buildTarget": "favorites-app:build:development"
             }
           },
           "defaultConfiguration": "development"

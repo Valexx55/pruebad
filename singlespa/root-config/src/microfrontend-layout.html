@@ -17,9 +17,21 @@
 
   -->
 
+  <nav style="display:flex; gap:12px; padding:12px; border-bottom:1px solid #ddd;">
+    <a href="/news">News</a>
+    <a href="/favorites">Favorites</a>
+  </nav>
+
   <main>
     <route default>
       <application name="@single-spa/welcome"></application>
+    </route>
+    <route path="news">
+      <application name="@vm/news-app"></application>
+    </route>
+
+    <route path="favorites">
+      <application name="@vm/favorites-app"></application>
     </route>
   </main>
 </single-spa-router>

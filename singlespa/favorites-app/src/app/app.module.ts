@@ -14,7 +14,7 @@ import { APP_BASE_HREF } from '@angular/common';
     AppRoutingModule
   ],
   providers: [
-    { provide: APP_BASE_HREF, useValue: '/news' }//para indicar que la raíz de la app es http://localhost:9000/news
+    { provide: APP_BASE_HREF, useValue: '/favorites' }//para indicar que la raíz de la app es http://localhost:9000/favorites
   ],
   bootstrap: [AppComponent]
 })
