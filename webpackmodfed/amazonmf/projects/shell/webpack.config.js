@@ -12,4 +12,5 @@ module.exports = withModuleFederationPlugin({
     ...shareAll({ singleton: true, strictVersion: true, requiredVersion: 'auto' }),
   },
 
+  sharedMappings:["@core-lib"]//importante hacer este paso para que los servicios sean Singleton (única instancia en el contexto común)
 });

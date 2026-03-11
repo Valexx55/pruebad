@@ -1,5 +1,8 @@
+import { ProductoEvent } from './../../../../../../models/src/lib/models/producto-event';
 import { Component, inject, OnInit } from '@angular/core';
 import { CarritoService } from '../../services/carrito.service';
+import { CommunicationService } from '@core-lib';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-carrito',
@@ -11,12 +14,27 @@ export class CarritoComponent implements OnInit{
 
   private carritoService = inject(CarritoService)
 
+  private sub!:Subscription;
+
+  comservice = inject(CommunicationService)
   carrito: any[] = [];
   total = 0;
 
   
   ngOnInit(): void {
     this.cargarCarrito();
+
+    this.sub = this.comservice.productoAddedSubject.subscribe(
+      (evento : ProductoEvent|null) => {
+        if (evento)
+        {
+          console.log(` Nombre = ${evento.nombre} Id = ${evento.id} `)
+        } else {
+          console.log(` evento nulo `)
+        }
+        
+      }
+    )
   }
   
   cargarCarrito() {
