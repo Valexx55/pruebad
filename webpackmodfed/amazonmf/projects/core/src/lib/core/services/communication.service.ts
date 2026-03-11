@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ProductoEvent } from '@models';
-import { BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
+
+
+const STORAGE_KEY = 'carrito_productos';
 
 @Injectable({
   providedIn: 'root'
@@ -16,14 +19,21 @@ export class CommunicationService {
   //productoAddedSubject = new BehaviorSubject<ProductoEvent|null>(null)//Union Type
   //funciona, nos da los 2 (N) últimos productos pero los anteriores se pierde
   //productoAddedSubject = new ReplaySubject<ProductoEvent>(2)
-  productoAddedSubject = new BehaviorSubject<ProductoEvent[]>([])
+  productoAddedSubject: BehaviorSubject<ProductoEvent[]>;// = new BehaviorSubject<ProductoEvent[]>([])
 
   //la lista mutable de los productos
-  productos$ = this.productoAddedSubject.asObservable()
+  productos$:Observable<ProductoEvent[]>;// = this.productoAddedSubject.asObservable()
 
   constructor() { 
     console.log("Instancia de ComService creada " + Math.random());
     //this.arrayProductos = []
+    //persistencia en local storage recuperamos el estado inicial
+    let guardado = sessionStorage.getItem(STORAGE_KEY);
+    let inicial: ProductoEvent[] = guardado ? JSON.parse(guardado) : [];
+
+    this.productoAddedSubject = new BehaviorSubject<ProductoEvent[]>(inicial);
+    this.productos$ = this.productoAddedSubject.asObservable()
+
   }
 
 
@@ -44,8 +54,13 @@ export class CommunicationService {
       //añadimos uno nuevo
       this.productoAddedSubject.next([...listaActual, {...productoEvent, cantidad:1}])
     }
-
+    this.persistir();
     
+  }
+
+  persistir ()
+  {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(this.productoAddedSubject.value));
   }
   //versión válidad hasta Replay
   /*
@@ -53,5 +68,13 @@ export class CommunicationService {
   {
     this.productoAddedSubject.next(producto)
   }*/
+
+    vaciarProductos ()
+    {
+      //reset de la lista de productos RAM
+      this.productoAddedSubject.next([]);
+
+      sessionStorage.removeItem(STORAGE_KEY);
+    }
 
 }

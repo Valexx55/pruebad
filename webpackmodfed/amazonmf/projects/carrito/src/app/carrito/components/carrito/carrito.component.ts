@@ -1,5 +1,5 @@
 import { ProductoEvent } from './../../../../../../models/src/lib/models/producto-event';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { CarritoService } from '../../services/carrito.service';
 import { CommunicationService } from '@core-lib';
 import { map, Observable, Observer, Subscription } from 'rxjs';
@@ -70,10 +70,10 @@ export class CarritoComponent implements OnInit{
     this.total = this.carritoService.getTotal();
   }
 
-  vaciarCarrito() {
+  /*vaciarCarrito() {
     this.carritoService.vaciarCarrito();
     this.cargarCarrito();
-  }
+  }*/
 
   /**
    * hacemos una mejora para que en caso de que cambie un elemento de 
@@ -85,5 +85,24 @@ export class CarritoComponent implements OnInit{
   trackById(_index: number, item: any): number {
   return item.id;
 }
+
+
+ /**
+   * f5 - refrsco
+   * Antes de que se recargue la página, se muestra un aviso
+   * para recordar al usuario, que en caso de proceder
+   * se pierden los datos
+   * @param event RECARGA
+   */
+  /*@HostListener('window:beforeunload', ['$event'])
+  avisoRecarga(event: BeforeUnloadEvent) {
+    event.preventDefault();
+    //event.returnValue = '';
+  }*/
+
+  vaciarCarrito()
+  {
+    this.comservice.vaciarProductos()
+  }
 
 }
