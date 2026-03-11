@@ -1,11 +1,11 @@
 const { shareAll, withModuleFederationPlugin } = require('@angular-architects/module-federation/webpack');
-
+//decimos dónde están los mfe remotos
 module.exports = withModuleFederationPlugin({
 
   remotes: {
-    "carrito": "http://localhost:4200/remoteEntry.js",
-    "productos": "http://localhost:4200/remoteEntry.js",
-    "perfil": "http://localhost:4200/remoteEntry.js",    
+    "carrito": "http://localhost:4201/remoteEntry.js",
+    "productos": "http://localhost:4203/remoteEntry.js",
+    "perfil": "http://localhost:4202/remoteEntry.js",    
   },
 
   shared: {
