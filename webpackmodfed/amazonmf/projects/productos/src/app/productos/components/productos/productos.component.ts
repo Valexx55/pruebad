@@ -37,7 +37,9 @@ export class ProductosComponent implements OnInit{
       cantidad: 1
     }
 
-    this.comservice.emitirProductoAdded(evento)
+    //this.comservice.emitirProductoAdded(evento)
+    this.comservice.agregarProducto(evento)
+    
     
   }
 }

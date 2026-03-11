@@ -2,7 +2,7 @@ import { ProductoEvent } from './../../../../../../models/src/lib/models/product
 import { Component, inject, OnInit } from '@angular/core';
 import { CarritoService } from '../../services/carrito.service';
 import { CommunicationService } from '@core-lib';
-import { Subscription } from 'rxjs';
+import { Observer, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-carrito',
@@ -12,6 +12,12 @@ import { Subscription } from 'rxjs';
 export class CarritoComponent implements OnInit{
   
 
+  observerListaProductos:Observer<ProductoEvent[]> = {
+  next: listaproductos => console.log('Observer got a next value: ' + listaproductos),
+  error: err => console.error('Observer got an error: ' + err),
+  complete: () => console.log('Observer got a complete notification'),
+};
+
   private carritoService = inject(CarritoService)
 
   private sub!:Subscription;
@@ -20,11 +26,13 @@ export class CarritoComponent implements OnInit{
   carrito: any[] = [];
   total = 0;
 
+  productos$ = this.comservice.productos$;
+
   
   ngOnInit(): void {
     this.cargarCarrito();
 
-    this.sub = this.comservice.productoAddedSubject.subscribe(
+   /* this.sub = this.comservice.productoAddedSubject.subscribe(
       (evento : ProductoEvent|null) => {
         if (evento)
         {
@@ -34,7 +42,16 @@ export class CarritoComponent implements OnInit{
         }
         
       }
-    )
+    )*/
+
+      this.sub = this.comservice.productoAddedSubject.subscribe(
+      (evento : ProductoEvent[]) => {
+       
+        console.table(evento)
+        
+      })
+
+      this.comservice.productoAddedSubject.subscribe(this.observerListaProductos)
   }
   
   cargarCarrito() {
