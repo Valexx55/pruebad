@@ -2,7 +2,7 @@ import { ProductoEvent } from './../../../../../../models/src/lib/models/product
 import { Component, inject, OnInit } from '@angular/core';
 import { CarritoService } from '../../services/carrito.service';
 import { CommunicationService } from '@core-lib';
-import { Observer, Subscription } from 'rxjs';
+import { map, Observable, Observer, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-carrito',
@@ -27,10 +27,21 @@ export class CarritoComponent implements OnInit{
   total = 0;
 
   productos$ = this.comservice.productos$;
+  total$!:Observable<number>
 
   
   ngOnInit(): void {
     this.cargarCarrito();
+    this.total$ = this.productos$.
+                  pipe
+                  (
+                    map(
+                      productos => 
+                      {
+                         return productos.reduce((acc, p)=> acc + p.precio * (p.cantidad ?? 1), 0)
+                       }
+                      )
+                  )
 
    /* this.sub = this.comservice.productoAddedSubject.subscribe(
       (evento : ProductoEvent|null) => {
