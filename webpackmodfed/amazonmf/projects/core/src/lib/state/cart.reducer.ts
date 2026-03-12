@@ -16,7 +16,7 @@ export const initialState:CartState = {
 
 //se define la reacción a las acciones (como transformamos el estado en uno nuevo)
 
-createReducer (
+export const cartReducer = createReducer (
     initialState, 
     on(CartActions.agregarProducto, (state, {producto}) => {
         //agregamos un producot y puede ser que exista o que no.
@@ -29,5 +29,9 @@ createReducer (
 
         return{...state, productos}
     }),
-    //on()//TODO: hacer el reducer de  VACIAR CARRITO
+    /*on(CartActions.vaciarCarrito, (state) => ({
+        ...state,
+        productos: []
+    }))*/
+    on(CartActions.vaciarCarrito, ()=>({productos:[]}))
 )

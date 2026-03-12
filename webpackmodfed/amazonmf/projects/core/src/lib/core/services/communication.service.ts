@@ -1,6 +1,8 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ProductoEvent } from '@models';
+import { Store } from '@ngrx/store';
 import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
+import * as CartActions from '../../state/cart.actions';
 
 
 const STORAGE_KEY = 'carrito_productos';
@@ -24,6 +26,9 @@ export class CommunicationService {
   //la lista mutable de los productos
   productos$:Observable<ProductoEvent[]>;// = this.productoAddedSubject.asObservable()
 
+  //inyectamos el Store para poder disparar la acción
+  store:Store = inject(Store);
+
   constructor() { 
     console.log("Instancia de ComService creada " + Math.random());
     //this.arrayProductos = []
@@ -45,6 +50,7 @@ export class CommunicationService {
     //si existe ya ese prodyucto
     let indice = listaActual.findIndex(p=> p.id==productoEvent.id);
 
+    //rxjs
     if (indice>-1)
     {
       //existe ya en la lista ese producto, incrementamos
@@ -54,7 +60,10 @@ export class CommunicationService {
       //añadimos uno nuevo
       this.productoAddedSubject.next([...listaActual, {...productoEvent, cantidad:1}])
     }
+    //localstorage
     this.persistir();
+    //ngrx
+    this.store.dispatch(CartActions.agregarProducto({producto:productoEvent}));
     
   }
 
