@@ -28,7 +28,7 @@
 
 
         <h3>ESTADO RXJS</h3>
-       <tbody>
+        <tbody>
             <!-- con la pipe async, consumo directamente los datos que proporciona el observable
              me ahorro la suscripción -->
             <tr *ngIf="(productos$ | async)?.length === 0">
@@ -48,14 +48,14 @@
         <ng-template #carritoVacio>
             <tbody>
                 <tr>
-                    <td colspan="3" class="text-center" >Tu carrito está vacío</td>
+                    <td colspan="3" class="text-center">Tu carrito está vacío</td>
                 </tr>
             </tbody>
         </ng-template>
 
     </table>
     <!-- TODO: Consumir un total de forma reactiva con un Observable Number-->
-    <div class = "carrito-total">
+    <div class="carrito-total">
         <!-- <strong>TOTAL:</strong> {{total | currency:'EUR'}} -->
         <strong>TOTAL:</strong> {{total$ | async | currency:'EUR'}}
     </div>
@@ -63,9 +63,14 @@
     <button (click)="vaciarCarrito()">Vaciar carrito</button>
 
     <h3>ESTADO NGRX</h3>
-        <ul>
-            <li *ngFor="let px of (productosNgRx$ | async)">
-                    {{px.nombre}} (x {{px.cantidad}}) <button (click)="borrarProducto(px.id)">eliminar producto</button>
-            </li>
-        </ul>
+    <ul>
+        <li *ngFor="let px of (productosNgRx$ | async)">
+            {{px.nombre}} (x {{px.cantidad}}) <button (click)="borrarProducto(px.id)">eliminar producto</button>
+        </li>
+    </ul>
+    <div class="carrito-total">
+        <!-- <strong>TOTAL:</strong> {{total | currency:'EUR'}} -->
+        <strong>TOTAL productos:</strong> {{totalItemsNgRx$ | async }}
+        <strong>TOTAL precio:</strong> {{totalAmountNgRx$ | async | currency:'EUR'}}
+    </div>
 </div>

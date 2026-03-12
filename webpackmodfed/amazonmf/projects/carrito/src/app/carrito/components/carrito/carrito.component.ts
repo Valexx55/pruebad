@@ -1,7 +1,7 @@
 import { ProductoEvent } from './../../../../../../models/src/lib/models/producto-event';
 import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { CarritoService } from '../../services/carrito.service';
-import { CommunicationService, eliminarProducto, selectProductos } from '@core-lib';
+import { CommunicationService, eliminarProducto, selectPrecioTotal, selectProductos, selectTotalItems } from '@core-lib';
 import { map, Observable, Observer, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 
@@ -31,7 +31,11 @@ export class CarritoComponent implements OnInit{
   total = 0;
 
   productos$ = this.comservice.productos$;//productos RxJS
-  productosNgRx$ = this.store.select(selectProductos)
+
+  productosNgRx$:Observable<ProductoEvent[]> = this.store.select(selectProductos);////productos NgRx
+  totalItemsNgRx$:Observable<number> = this.store.select(selectTotalItems);
+  totalAmountNgRx$:Observable<number> = this.store.select(selectPrecioTotal);
+
   total$!:Observable<number>
 
   
