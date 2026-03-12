@@ -1,7 +1,7 @@
 import { ProductoEvent } from './../../../../../../models/src/lib/models/producto-event';
 import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { CarritoService } from '../../services/carrito.service';
-import { CommunicationService, selectProductos } from '@core-lib';
+import { CommunicationService, eliminarProducto, selectProductos } from '@core-lib';
 import { map, Observable, Observer, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 
@@ -108,6 +108,11 @@ export class CarritoComponent implements OnInit{
   vaciarCarrito()
   {
     this.comservice.vaciarProductos()
+  }
+
+  borrarProducto(id: number)
+  {
+   this.comservice.eliminarProducto(id);
   }
 
 }

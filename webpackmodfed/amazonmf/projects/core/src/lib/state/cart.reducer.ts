@@ -3,6 +3,7 @@
 import { ProductoEvent } from "@models";
 import { createReducer, on } from "@ngrx/store";
 import  * as CartActions from './cart.actions';
+import { CommunicationService } from "../core/services/communication.service";
 
 //en nuestro caso el estado es un array de productos
 export interface CartState {
@@ -10,9 +11,14 @@ export interface CartState {
 }
 
 //el estado inicial de nuesta APP
-export const initialState:CartState = {
+/*export const initialState:CartState = {
     productos: []
-}
+}*/
+
+//iniciamos el estado inicial de Redux con la info persistida en el localStorage
+export const initialState:CartState = {
+    productos: CommunicationService.recuperarEstadoProductos()
+} 
 
 //se define la reacción a las acciones (como transformamos el estado en uno nuevo)
 
@@ -33,7 +39,11 @@ export const cartReducer = createReducer (
         ...state,
         productos: []
     }))*/
-    on(CartActions.vaciarCarrito, ()=>({productos:[]}))
+    on(CartActions.vaciarCarrito, ()=>({productos:[]})),
 
-    //TODO: anadir otra acción a Redux que es eliminarProducto
+    
+    on(CartActions.eliminarProducto, (state, { id }) => {
+        const productos = state.productos.filter(p => p.id !== id);
+        return { ...state, productos };
+    })
 )

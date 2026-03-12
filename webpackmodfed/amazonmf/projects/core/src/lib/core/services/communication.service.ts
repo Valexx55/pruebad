@@ -33,12 +33,23 @@ export class CommunicationService {
     console.log("Instancia de ComService creada " + Math.random());
     //this.arrayProductos = []
     //persistencia en local storage recuperamos el estado inicial
-    let guardado = sessionStorage.getItem(STORAGE_KEY);
-    let inicial: ProductoEvent[] = guardado ? JSON.parse(guardado) : [];
+    //let guardado = sessionStorage.getItem(STORAGE_KEY);
+    //let guardado = localStorage.getItem(STORAGE_KEY);
+    let inicial: ProductoEvent[] = CommunicationService.recuperarEstadoProductos();
 
     this.productoAddedSubject = new BehaviorSubject<ProductoEvent[]>(inicial);
     this.productos$ = this.productoAddedSubject.asObservable()
 
+  }
+
+  static recuperarEstadoProductos () : ProductoEvent[]
+  {
+    let inicial: ProductoEvent[] = []; 
+    
+      let guardado = localStorage.getItem(STORAGE_KEY);
+      inicial = guardado ? JSON.parse(guardado) : [];
+    
+      return inicial;
   }
 
 
@@ -69,7 +80,8 @@ export class CommunicationService {
 
   persistir ()
   {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(this.productoAddedSubject.value));
+    //sessionStorage.setItem(STORAGE_KEY, JSON.stringify(this.productoAddedSubject.value));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.productoAddedSubject.value));
   }
   //versión válidad hasta Replay
   /*
@@ -89,5 +101,18 @@ export class CommunicationService {
       this.store.dispatch(CartActions.vaciarCarrito());
     
     }
+
+    eliminarProducto(id: number) {
+    // RxJS: quitamos el producto del BehaviorSubject
+    const listaActual = this.productoAddedSubject.value;
+    const nuevaLista = listaActual.filter(p => p.id !== id);
+    this.productoAddedSubject.next(nuevaLista);
+
+    // Persistencia
+    this.persistir();
+
+    // NgRx: acción para eliminar del store
+    this.store.dispatch(CartActions.eliminarProducto({ id }));
+  }
 
 }

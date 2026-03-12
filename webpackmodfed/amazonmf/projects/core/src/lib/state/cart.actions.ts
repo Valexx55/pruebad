@@ -10,3 +10,8 @@ export const agregarProducto = createAction (
 
 
 export const vaciarCarrito = createAction ('[Carrito] VaciarCarrito')
+
+export const eliminarProducto = createAction(
+  '[Carrito] Eliminar producto',
+  props<{ id: number }>()
+);
