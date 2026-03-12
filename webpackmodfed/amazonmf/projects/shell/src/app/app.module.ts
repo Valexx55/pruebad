@@ -14,7 +14,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    StoreModule.forRoot({carrito: cartReducer}),//carrito es el slice y cartReducer es la función que contiene el estado inicial y la reacción a las acciones
+    StoreModule.forRoot({carrito: cartReducer}),//Inicializa el Store de NgRx carrito es el slice y cartReducer es la función que contiene el estado inicial y la reacción a las acciones
      StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states
       logOnly: !isDevMode(), // Restrict extension to log-only mode
