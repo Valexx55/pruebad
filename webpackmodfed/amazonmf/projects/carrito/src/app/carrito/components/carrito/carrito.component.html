@@ -27,6 +27,7 @@
         </tbody> -->
 
 
+        <h3>ESTADO RXJS</h3>
        <tbody>
             <!-- con la pipe async, consumo directamente los datos que proporciona el observable
              me ahorro la suscripción -->
@@ -60,4 +61,11 @@
     </div>
 
     <button (click)="vaciarCarrito()">Vaciar carrito</button>
+
+    <h3>ESTADO NGRX</h3>
+        <ul>
+            <li *ngFor="let px of (productosNgRx$ | async)">
+                    {{px.nombre}} (x {{px.cantidad}})
+            </li>
+        </ul>
 </div>

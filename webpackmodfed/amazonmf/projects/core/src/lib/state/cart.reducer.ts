@@ -34,4 +34,6 @@ export const cartReducer = createReducer (
         productos: []
     }))*/
     on(CartActions.vaciarCarrito, ()=>({productos:[]}))
+
+    //TODO: anadir otra acción a Redux que es eliminarProducto
 )

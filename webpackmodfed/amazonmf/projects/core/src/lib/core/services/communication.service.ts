@@ -81,9 +81,13 @@ export class CommunicationService {
     vaciarProductos ()
     {
       //reset de la lista de productos RAM
-      this.productoAddedSubject.next([]);
+      this.productoAddedSubject.next([]);//vacíamos productos del RxJs
 
-      sessionStorage.removeItem(STORAGE_KEY);
+      sessionStorage.removeItem(STORAGE_KEY);//vaciar productos del localStorage
+
+      //ngrx
+      this.store.dispatch(CartActions.vaciarCarrito());
+    
     }
 
 }

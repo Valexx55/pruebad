@@ -1,8 +1,9 @@
 import { ProductoEvent } from './../../../../../../models/src/lib/models/producto-event';
 import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { CarritoService } from '../../services/carrito.service';
-import { CommunicationService } from '@core-lib';
+import { CommunicationService, selectProductos } from '@core-lib';
 import { map, Observable, Observer, Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-carrito',
@@ -11,6 +12,9 @@ import { map, Observable, Observer, Subscription } from 'rxjs';
 })
 export class CarritoComponent implements OnInit{
   
+
+    //inyectamos el Store para acceder al selector
+    store:Store = inject(Store);
 
   observerListaProductos:Observer<ProductoEvent[]> = {
   next: listaproductos => console.log('Observer got a next value: ' + listaproductos),
@@ -26,12 +30,13 @@ export class CarritoComponent implements OnInit{
   carrito: any[] = [];
   total = 0;
 
-  productos$ = this.comservice.productos$;
+  productos$ = this.comservice.productos$;//productos RxJS
+  productosNgRx$ = this.store.select(selectProductos)
   total$!:Observable<number>
 
   
   ngOnInit(): void {
-    this.cargarCarrito();
+   // this.cargarCarrito();//cargábamos una lista de mentira del servicio versión inicial
     this.total$ = this.productos$.
                   pipe
                   (
