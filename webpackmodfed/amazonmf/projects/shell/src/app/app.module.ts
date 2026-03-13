@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { StoreModule } from '@ngrx/store';
 import { cartReducer } from '@core-lib';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { HeaderComponent } from '@shared-lib';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HeaderComponent,  
     StoreModule.forRoot({carrito: cartReducer}),//Inicializa el Store de NgRx carrito es el slice y cartReducer es la función que contiene el estado inicial y la reacción a las acciones
      StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states
